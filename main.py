@@ -45,7 +45,7 @@ class Text():
         else:
             c = self.colors["default"]
 
-        print("{}{}{}".format(c, text, self.colors["default"]))
+        return "{}{}{}".format(c, text, self.colors["default"])
 
     def check_color(self, color):
         """
@@ -66,16 +66,47 @@ class Game():
         self.width = width
         self.grid = []
 
+        self.build_grid()
         self.run()
 
+    def build_frame(self):
+        frame = []
+        for i in range(self.width):
+            frame.append("-")
+            if i < (self.width - 1):
+                frame.append("+")
+
+        return frame
+
+    def build_spaces(self, start=1):
+        spaces = []
+        for i in range(self.width):
+            spaces.append("{}".format(start))
+            start += 1
+            if i < (self.width - 1):
+                    spaces.append("|")
+
+        return spaces
+
+    def build_grid(self):
+        self.grid.append(self.build_spaces())
+        self.grid.append(self.build_frame())
+        self.grid.append(self.build_spaces(self.width + 1))
+        self.grid.append(self.build_frame())
+        self.grid.append(self.build_spaces(self.width * 2 + 1))    
+
     def draw_grid(self):
-        pass
+        for l in range(len(self.grid)):
+            print("".join(self.grid[l]))
+
+        self.prompt_action()
 
     def update_grid(self):
         pass
 
     def prompt_action(self):
-        pass
+        print()
+        i = input("{} turn to choose a square (1-9): ".format(Text().colored("red", "x's")))
 
     def check_win(self):
         return True
@@ -84,8 +115,8 @@ class Game():
         while self.run:
             self.draw_grid()
             self.update_grid()
-            self.run == self.check_win()
-
+            if self.check_win() == True:
+                break
 
 def main():
     print("Tic-Tac-Toe\n")
