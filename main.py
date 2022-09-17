@@ -8,6 +8,7 @@ by Alexander Turner
 
 
 import os
+from re import X
 
 
 GRID_HEIGHT = 3
@@ -64,10 +65,14 @@ class Game():
     def __init__(self, height=GRID_HEIGHT, width=GRID_WIDTH):
         self.height = height
         self.width = width
+        self.run = True
         self.grid = []
+        self.turn = 0
+        self.player_x = Text().colored("red", "x")
+        self.player_o = Text().colored("green", "o")
 
         self.build_grid()
-        self.run()
+        self.game_loop()
 
     def build_frame(self):
         frame = []
@@ -98,26 +103,42 @@ class Game():
     def draw_grid(self):
         for l in range(len(self.grid)):
             print("".join(self.grid[l]))
-
         self.prompt_action()
 
-    def update_grid(self):
-        pass
-
     def prompt_action(self):
+        self.turn += 1
+        player = ""
+
+        if self.turn % 2 == 0:
+            player = self.player_o
+        else:
+            player = self.player_x
+
         print()
-        i = input("{} turn to choose a square (1-9): ".format(Text().colored("red", "x's")))
+        if self.check_win() == True:
+            self.run = False
+            print("Win")
+        else:
+            i = input("{}'s turn to choose a square (1-9): ".format(Text().colored("red", player)))
+            print()
 
+            for l in self.grid:
+                if i in l:
+                    space = l.index(i)
+                    l[space] = player
+        
     def check_win(self):
-        return True
+        if self.turn >= 5:
+            win = True
+        else:
+            win = False
 
-    def run(self):
-        while self.run:
+        return win
+
+    def game_loop(self):
+        while self.run == True:
             self.draw_grid()
-            self.update_grid()
-            if self.check_win() == True:
-                break
-
+            
 def main():
     print("Tic-Tac-Toe\n")
     Game()
